@@ -1,0 +1,10 @@
+# 只追踪 aliyunoss/ 内的源码
+/*
+!/aliyunoss/
+!.gitignore
+
+# 通用忽略
+__pycache__/
+*.pyc
+venv/
+.env
