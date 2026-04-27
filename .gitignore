@@ -4,6 +4,8 @@
 !/.gitignore
 !README.md
 !/docs/
+!/setup.py
+!/requirements.txt
 
 # 通用忽略
 __pycache__/

@@ -66,9 +66,6 @@ class OperationLogger:
         # 日志文件名
         self._log_filename = self._generate_log_filename()
 
-        # OSS 上文件的当前 position（用于追加写入）
-        self._next_position = self._get_existing_file_length()
-
     @property
     def log_filename(self) -> str:
         """
@@ -247,8 +244,7 @@ class OperationLogger:
         position = self._get_existing_file_length()
 
         try:
-            result = self._bucket.append_object(key, position, content_bytes)
-            self._next_position = result.next_position
+            self._bucket.append_object(key, position, content_bytes)
         except Exception as e:
             raise LogError(f"日志写入OSS失败: {str(e)}")
 

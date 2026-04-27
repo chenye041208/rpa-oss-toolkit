@@ -6,7 +6,6 @@
 """
 
 import uuid
-import datetime
 import re
 import os
 
@@ -18,22 +17,6 @@ def generate_session_id():
     :return: UUID 格式的会话唯一标识
     """
     return str(uuid.uuid4())
-
-
-def generate_log_filename(session_name: str) -> str:
-    """
-    生成日志文件名
-
-    格式：{yyyy-mm-dd}_{session_name}.log
-    例如：2026-04-20_RPA流程A.log
-
-    :param session_name: 会话名称
-    :return: 日志文件名
-    """
-    now = datetime.datetime.now()
-    date_str = f"{now.year}-{now.month:02d}-{now.day:02d}"
-    return f"{date_str}_{session_name}.log"
-
 
 def format_bytes(bytes_num: float, decimals: int = 2) -> str:
     """

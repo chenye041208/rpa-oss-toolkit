@@ -152,14 +152,15 @@ aliyunoss/
 ├── client.py        # OSSClient 工厂类 + Session 会话类
 ├── operations.py    # OSS 底层操作
 ├── logger.py        # 操作日志器
-├── config.py        # 配置
+├── config.py        # 配置管理器
 ├── exceptions.py    # 异常类
-├── metadata.py      # 元数据操作
 ├── utils.py         # 工具函数
-└── v1.1.0.md        # 当前版本文档
+└── v1.1.1.md        # 当前版本文档
 
-docs/                # 各版本发布说明（不在 Git 追踪范围内）
+docs/                # 各版本发布说明
+├── v1.0.0.md
 ├── v1.1.0.md
+└── v1.1.1.md
 
 requirements.txt     # 依赖
 setup.py             # 包配置
