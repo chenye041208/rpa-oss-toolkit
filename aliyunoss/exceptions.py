@@ -112,3 +112,13 @@ class LogError(OSSError):
     可能原因：网络中断、权限不足等。
     """
     pass
+
+
+class ConfigError(OSSError):
+    """
+    配置参数错误
+
+    当配置项的名称、类型或值不合法时抛出此异常。
+    例如：设置了不存在的配置项、类型不匹配、值超出范围等。
+    """
+    pass

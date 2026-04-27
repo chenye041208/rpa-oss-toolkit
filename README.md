@@ -107,6 +107,8 @@ with OSSClient.create_session(
 | get_metadata | remote_key | dict | 获取文件元数据 |
 | set_metadata | remote_key, metadata | bool | 设置文件元数据 |
 | flush_logs | - | - | 手动刷新日志 |
+| get_config | key | dict / 值 | 获取当前配置（key 为空返回全部） |
+| set_config | **kwargs | - | 修改配置项（如 buffer_size=100） |
 | close | - | - | 关闭会话 |
 
 ---
@@ -154,10 +156,10 @@ aliyunoss/
 ├── exceptions.py    # 异常类
 ├── metadata.py      # 元数据操作
 ├── utils.py         # 工具函数
-└── v1.0.0.md        # 当前版本文档
+└── v1.1.0.md        # 当前版本文档
 
 docs/                # 各版本发布说明（不在 Git 追踪范围内）
-├── v1.0.0.md
+├── v1.1.0.md
 
 requirements.txt     # 依赖
 setup.py             # 包配置
@@ -185,13 +187,29 @@ except UploadError as e:
 
 ## 配置项
 
-在 `aliyunoss/config.py` 中集中管理，可根据需要调整：
+通过 `ConfigManager` 集中管理，支持运行时动态修改：
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `LOG_PREFIX` | `"logs/"` | 日志文件 OSS 路径前缀 |
-| `LOG_BUFFER_SIZE` | `50` | 日志缓冲区大小（条） |
-| `MIN_MULTITHREAD_SIZE` | `5242880` (5MB) | 分片传输阈值 |
-| `MAX_RETRY_COUNT` | `3` | 分片传输最大重试次数 |
-| `RETRY_DELAY` | `2s` | 首次重试延迟（指数退避） |
-| `DEFAULT_EXPIRES_IN` | `3600` (1小时) | 会话默认有效期 |
+| `log_prefix` | `"logs/"` | 日志文件 OSS 路径前缀 |
+| `log_buffer_size` | `50` | 日志缓冲区大小（条） |
+| `min_multithread_size` | `5242880` (5MB) | 分片传输阈值 |
+| `max_retry_count` | `3` | 分片传输最大重试次数 |
+| `retry_delay` | `2s` | 首次重试延迟（指数退避） |
+| `default_expires_in` | `3600` (1小时) | 会话默认有效期 |
+
+运行时修改配置：
+
+```python
+# 查看当前配置
+session.get_config()
+# -> {"log_prefix": "logs/", "log_buffer_size": 50, ...}
+
+# 修改单条
+session.set_config(log_buffer_size=100)
+
+# 批量修改
+session.set_config(max_retry_count=5, retry_delay=3)
+```
+
+完整默认值见 `aliyunoss/config.py`。

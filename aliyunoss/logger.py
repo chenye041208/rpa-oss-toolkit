@@ -147,6 +147,22 @@ class OperationLogger:
         if self._buffer:
             self.flush()
 
+    def update_log_prefix(self, log_prefix: str):
+        """
+        更新日志路径前缀
+
+        :param log_prefix: 新的日志路径前缀
+        """
+        self._log_prefix = log_prefix
+
+    def update_buffer_size(self, buffer_size: int):
+        """
+        更新缓冲区大小
+
+        :param buffer_size: 新的缓冲区大小（条）
+        """
+        self._buffer_size = buffer_size
+
     def _generate_log_filename(self) -> str:
         """
         生成日志文件名

@@ -17,8 +17,8 @@ from typing import Optional
 
 import oss2
 
-from .config import LOG_PREFIX, DEFAULT_EXPIRES_IN
-from .exceptions import ValidationError, SessionError
+from .config import LOG_PREFIX, DEFAULT_EXPIRES_IN, ConfigManager
+from .exceptions import ValidationError, SessionError, ConfigError
 from .utils import generate_session_id
 from .operations import Operations
 from .logger import OperationLogger
@@ -156,14 +156,29 @@ class Session:
         self._bucket = oss2.Bucket(auth, endpoint, bucket)
 
         # 会话信息
+        # 创建配置管理器
+        self._config = ConfigManager(
+            log_prefix=log_prefix,
+            default_expires_in=expires_in,
+        )
+
+        # 会话信息
         self._session_id = generate_session_id()
         self._created_at = datetime.now(tz.utc)
-        self._expires_at = self._created_at + timedelta(seconds=expires_in)
+        expires_in_val = self._config.get("default_expires_in")
+        if expires_in_val is not None:
+            self._expires_at = self._created_at + timedelta(seconds=expires_in_val)
+        else:
+            self._expires_at = None
         self._is_valid = True
 
         # 初始化操作类和日志器
         self._operations = Operations(self._bucket)
-        self._logger = OperationLogger(self._bucket, session_name, LOG_PREFIX)
+        self._logger = OperationLogger(
+            self._bucket, session_name,
+            self._config.get("log_prefix"),
+            self._config.get("log_buffer_size"),
+        )
 
     # ==================== 属性 ====================
 
@@ -207,6 +222,40 @@ class Session:
             self._is_valid = False
             return False
         return True
+
+    # ==================== 配置管理 ====================
+
+    def get_config(self, key: Optional[str] = None):
+        """
+        获取会话配置
+
+        :param key: 配置项名称，为 None 时返回全部配置
+        :return: 单个配置值，或全部配置的字典
+
+        使用示例：
+            val = session.get_config("log_buffer_size")  # 单条
+            all = session.get_config()                    # 全部
+        """
+        return self._config.get(key)
+
+    def set_config(self, **kwargs):
+        """
+        修改会话配置
+
+        :param kwargs: 配置项键值对
+        :raises ConfigError: 配置项名称、类型或值不合法
+
+        使用示例：
+            session.set_config(log_prefix="logs/new/")
+            session.set_config(log_buffer_size=100, max_retry_count=5)
+        """
+        self._config.update(**kwargs)
+
+        # 同步更新相关组件
+        if "log_prefix" in kwargs:
+            self._logger.update_log_prefix(kwargs["log_prefix"])
+        if "log_buffer_size" in kwargs:
+            self._logger.update_buffer_size(kwargs["log_buffer_size"])
 
     @property
     def created_at(self) -> datetime:

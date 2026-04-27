@@ -52,7 +52,7 @@
         session.upload("本地文件.txt", "上传路径/文件.txt")
 """
 
-__version__ = "0.1.0"
+__version__ = "1.1.0"
 
 # 客户端与会话
 from .client import OSSClient, Session
@@ -71,6 +71,7 @@ from .exceptions import (
     CopyError,
     MetadataError,
     LogError,
+    ConfigError,
 )
 
 # 公共接口
@@ -93,4 +94,5 @@ __all__ = [
     "CopyError",
     "MetadataError",
     "LogError",
+    "ConfigError",
 ]
