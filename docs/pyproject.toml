@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aliyunoss"
+version = "0.1.0"
+description = "阿里云OSS操作库，带会话机制和操作日志"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "oss2>=2.18.0",
+    "requests>=2.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["aliyunoss*"]
