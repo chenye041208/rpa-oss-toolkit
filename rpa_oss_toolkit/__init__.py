@@ -52,7 +52,11 @@
         session.upload("本地文件.txt", "上传路径/文件.txt")
 """
 
-__version__ = "1.1.5"
+try:
+    from importlib.metadata import version, PackageNotFoundError
+    __version__ = version("rpa-oss-toolkit")
+except (PackageNotFoundError, ImportError):
+    __version__ = "0.0.0"
 
 # 客户端与会话
 from .client import OSSClient, Session

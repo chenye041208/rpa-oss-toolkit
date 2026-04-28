@@ -5,7 +5,8 @@ with open("README.md", encoding="utf-8") as f:
 
 setup(
     name="rpa-oss-toolkit",
-    version="1.1.5",
+    use_scm_version=True,
+    setup_requires=["setuptools-scm"],
     packages=find_packages(),
     install_requires=[
         "oss2>=2.0.0",

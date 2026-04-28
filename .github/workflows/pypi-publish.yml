@@ -2,11 +2,8 @@ name: Publish to PyPI
 
 on:
   push:
-    branches: [master]
-    paths:
-      - "setup.py"
-      - "rpa_oss_toolkit/__init__.py"
-      - "rpa_oss_toolkit/**/*.py"
+    tags:
+      - "v*"
 
 jobs:
   build-and-publish:
@@ -15,6 +12,9 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -22,7 +22,7 @@ jobs:
           python-version: "3.x"
 
       - name: Install build tools
-        run: python -m pip install build twine
+        run: python -m pip install build twine setuptools-scm
 
       - name: Build package
         run: python -m build
