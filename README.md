@@ -157,12 +157,13 @@ rpa_oss_toolkit/
 ├── config.py        # 配置管理器
 ├── exceptions.py    # 异常类
 ├── utils.py         # 工具函数
-└── v1.1.1.md        # 当前版本文档
+└── v1.1.4.md        # 当前版本文档
 
 docs/                # 各版本发布说明
 ├── v1.0.0.md
 ├── v1.1.0.md
-└── v1.1.1.md
+├── v1.1.1.md
+└── v1.1.4.md
 
 requirements.txt     # 依赖
 setup.py             # 包配置
