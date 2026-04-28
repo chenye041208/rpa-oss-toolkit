@@ -1,4 +1,6 @@
-# 阿里云 OSS 库 - RPA
+# RPA OSS Toolkit
+
+> ⚠️ **非官方工具包**：本库是个人开发的阿里云 OSS 工具包，并非阿里云官方出品。底层基于 `oss2` 封装。
 
 基于会话机制的阿里云 OSS 操作库，专为 RPA 流程设计，支持操作日志自动写入 OSS 远程存储。
 
@@ -17,7 +19,7 @@
 ### 安装
 
 ```bash
-pip install -e .
+pip install rpa-oss-toolkit
 ```
 
 依赖：`oss2>=2.0.0`
@@ -25,7 +27,7 @@ pip install -e .
 ### 基本使用
 
 ```python
-from aliyunoss import OSSClient
+from rpa_oss_toolkit import OSSClient
 
 # 1. 创建会话
 session = OSSClient.create_session(
@@ -147,7 +149,7 @@ with OSSClient.create_session(
 ## 目录结构
 
 ```
-aliyunoss/
+rpa_oss_toolkit/
 ├── __init__.py      # 包入口
 ├── client.py        # OSSClient 工厂类 + Session 会话类
 ├── operations.py    # OSS 底层操作
@@ -171,7 +173,7 @@ setup.py             # 包配置
 ## 异常处理
 
 ```python
-from aliyunoss import OSSClient, UploadError, SessionError
+from rpa_oss_toolkit import OSSClient, UploadError, SessionError
 
 try:
     session = OSSClient.create_session(...)
@@ -182,7 +184,7 @@ except UploadError as e:
     print(f"上传错误: {e}")
 ```
 
-完整异常体系见 `aliyunoss/exceptions.py`。
+完整异常体系见 `rpa_oss_toolkit/exceptions.py`。
 
 ---
 
@@ -213,4 +215,4 @@ session.set_config(log_buffer_size=100)
 session.set_config(max_retry_count=5, retry_delay=3)
 ```
 
-完整默认值见 `aliyunoss/config.py`。
+完整默认值见 `rpa_oss_toolkit/config.py`。

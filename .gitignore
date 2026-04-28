@@ -1,6 +1,6 @@
-# 只追踪 aliyunoss/ 内的源码
+# 只追踪 rpa_oss_toolkit/ 内的源码
 /*
-!/aliyunoss/
+!/rpa_oss_toolkit/
 !/.gitignore
 !README.md
 !/docs/

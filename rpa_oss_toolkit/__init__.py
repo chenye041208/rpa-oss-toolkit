@@ -12,7 +12,7 @@
     - 元数据验证：支持 Content-Type、Content-Disposition、Cache-Control 校验
 
 使用示例：
-    from aliyunoss import OSSClient
+    from rpa_oss_toolkit import OSSClient
 
     # 创建会话
     session = OSSClient.create_session(
@@ -52,7 +52,7 @@
         session.upload("本地文件.txt", "上传路径/文件.txt")
 """
 
-__version__ = "1.1.1"
+__version__ = "1.1.3"
 
 # 客户端与会话
 from .client import OSSClient, Session
