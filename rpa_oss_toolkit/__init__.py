@@ -52,7 +52,7 @@
         session.upload("本地文件.txt", "上传路径/文件.txt")
 """
 
-__version__ = "1.1.4"
+__version__ = "1.1.5"
 
 # 客户端与会话
 from .client import OSSClient, Session
