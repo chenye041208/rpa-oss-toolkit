@@ -7,6 +7,7 @@ setup(
     name="rpa-oss-toolkit",
     use_scm_version=True,
     setup_requires=["setuptools-scm"],
+    python_requires=">=3.8",
     packages=find_packages(),
     install_requires=[
         "oss2>=2.0.0",

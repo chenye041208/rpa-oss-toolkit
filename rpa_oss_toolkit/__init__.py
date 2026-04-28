@@ -54,9 +54,13 @@
 
 try:
     from importlib.metadata import version, PackageNotFoundError
-    __version__ = version("rpa-oss-toolkit")
-except (PackageNotFoundError, ImportError):
+except ImportError:
     __version__ = "0.0.0"
+else:
+    try:
+        __version__ = version("rpa-oss-toolkit")
+    except PackageNotFoundError:
+        __version__ = "0.0.0"
 
 # 客户端与会话
 from .client import OSSClient, Session
