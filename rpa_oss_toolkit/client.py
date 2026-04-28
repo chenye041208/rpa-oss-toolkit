@@ -387,20 +387,24 @@ class Session:
         self._validate()
         return self._bucket.object_exists(remote_key)
 
-    def get_url(self, remote_key: str, expires: int = 3600) -> str:
+    def get_url(self, remote_key: str, expires: int = 3600, attachment: bool = True) -> str:
         """
         获取文件访问签名 URL
 
         :param remote_key: OSS 键名
         :param expires: 有效期（秒），默认 3600 秒
+        :param attachment: 是否强制下载（否则浏览器可能直接打开），默认 False
         :return: 签名 URL
 
         使用示例：
             url = session.get_url("文件.txt", expires=3600)
-            print(url)
+            url = session.get_url("文件.txt", expires=3600, attachment=True)
         """
         self._validate()
-        return self._bucket.sign_url('GET', remote_key, expires)
+        params = None
+        if attachment:
+            params = {"response-content-disposition": "attachment"}
+        return self._bucket.sign_url('GET', remote_key, expires, params=params)
 
     def get_metadata(self, remote_key: str) -> dict:
         """
