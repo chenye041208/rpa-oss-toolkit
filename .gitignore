@@ -7,6 +7,8 @@
 !/setup.py
 !/requirements.txt
 !/.github/
+!/.gitattributes
+!/AGENTS.md
 
 # 通用忽略
 __pycache__/
