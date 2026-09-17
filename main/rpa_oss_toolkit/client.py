@@ -205,7 +205,7 @@ class Session:
         """
         获取日志文件名
 
-        :return: 日志文件名，格式 {date}_{session_name}.log
+        :return: 日志文件名，格式 {date}.log
         """
         return self._logger.log_filename
 
@@ -393,7 +393,7 @@ class Session:
 
         :param remote_key: OSS 键名
         :param expires: 有效期（秒），默认 3600 秒
-        :param attachment: 是否强制下载（否则浏览器可能直接打开），默认 False
+        :param attachment: 是否强制下载（否则浏览器可能直接打开），默认 True
         :return: 签名 URL
 
         使用示例：

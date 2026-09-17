@@ -6,7 +6,7 @@
 设计原理：
     操作产生 → 内存缓冲区(Buffer) → 定期/定量 → 追加写入OSS
 
-日志文件存储在 OSS，格式：{LOG_PREFIX}{date}_{session_name}.log
+日志文件存储在 OSS，格式：{LOG_PREFIX}{yyyy-mm-dd}.log
 每条日志为 JSON Lines 格式，便于解析和检索。
 
 主要功能：

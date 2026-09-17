@@ -4,6 +4,8 @@
 
 基于会话机制的阿里云 OSS 操作库，专为 RPA 流程设计，支持操作日志自动写入 OSS 远程存储。
 
+完整使用手册见 [main/docs/使用文档.md](main/docs/使用文档.md)。
+
 ## 核心特性
 
 - **会话机制**：先创建会话验证连接，后续操作通过会话执行
@@ -22,7 +24,7 @@
 pip install rpa-oss-toolkit
 ```
 
-依赖：`oss2>=2.0.0`
+依赖：`oss2>=2.18.0`
 
 ### 基本使用
 
@@ -49,8 +51,8 @@ files = session.list("prefix/")
 for f in files:
     print(f)
 
-# 5. 获取下载链接
-url = session.get_url("文件.txt", expires=3600)
+# 5. 获取下载链接（attachment=True 生成强制下载链接，默认开启）
+url = session.get_url("文件.txt", expires=3600, attachment=True)
 
 # 6. 判断文件存在
 if session.exists("文件.txt"):
@@ -74,7 +76,7 @@ with OSSClient.create_session(
     session_name="RPA流程A"
 ) as session:
     session.upload("test.pdf", "docs/test.pdf")
-    url = session.get_url("docs/test.pdf")
+    url = session.get_url("docs/test.pdf", expires=3600, attachment=True)
     print(url)
 # 会话自动关闭
 ```
@@ -93,7 +95,7 @@ with OSSClient.create_session(
 | access_key_secret | str | 是 | 阿里云 AccessKey Secret |
 | endpoint | str | 是 | OSS 地域节点，如 oss-cn-shenzhen.aliyuncs.com |
 | bucket | str | 是 | Bucket 名称 |
-| session_name | str | 是 | 会话名称（用于日志文件名标识） |
+| session_name | str | 是 | 会话名称（用于日志记录标识） |
 
 ### Session 方法
 
@@ -105,12 +107,12 @@ with OSSClient.create_session(
 | list | prefix | list | 列举文件 |
 | copy | src_key, dst_key | bool | 复制文件 |
 | exists | remote_key | bool | 判断文件存在 |
-| get_url | remote_key, expires | str | 获取签名下载链接 |
+| get_url | remote_key, expires=3600, attachment=True | str | 获取签名下载链接；attachment=True 生成强制下载链接，False 则由浏览器决定打开或下载 |
 | get_metadata | remote_key | dict | 获取文件元数据 |
 | set_metadata | remote_key, metadata | bool | 设置文件元数据 |
 | flush_logs | - | - | 手动刷新日志 |
 | get_config | key | dict / 值 | 获取当前配置（key 为空返回全部） |
-| set_config | **kwargs | - | 修改配置项（如 buffer_size=100） |
+| set_config | **kwargs | - | 修改配置项（如 log_buffer_size=100） |
 | close | - | - | 关闭会话 |
 
 ---
@@ -146,31 +148,36 @@ with OSSClient.create_session(
 
 ---
 
-## 目录结构
+## 配置项
 
+通过 `ConfigManager` 集中管理，支持运行时动态修改：
+
+| 配置项 | 默认值 | 说明 |
+|--------|--------|------|
+| `log_prefix` | `"logs/"` | 日志文件 OSS 路径前缀 |
+| `log_buffer_size` | `50` | 日志缓冲区大小（条） |
+| `min_multithread_size` | `5242880` (5MB) | 分片传输阈值（字节） |
+| `part_size` | `10485760` (10MB) | 分片大小（字节） |
+| `max_retry_count` | `3` | 分片传输最大重试次数 |
+| `retry_delay` | `2` (秒) | 首次重试延迟（指数退避） |
+| `default_expires_in` | `3600` (1小时) | 会话默认有效期（秒），None 为不过期 |
+| `default_cache_max_age` | `3600` (1小时) | 下载文件时默认的缓存时间（秒） |
+
+运行时修改配置：
+
+```python
+# 查看当前配置
+session.get_config()
+# -> {"log_prefix": "logs/", "log_buffer_size": 50, ...}
+
+# 修改单条
+session.set_config(log_buffer_size=100)
+
+# 批量修改
+session.set_config(max_retry_count=5, retry_delay=3)
 ```
-rpa_oss_toolkit/
-├── __init__.py      # 包入口
-├── client.py        # OSSClient 工厂类 + Session 会话类
-├── operations.py    # OSS 底层操作
-├── logger.py        # 操作日志器
-├── config.py        # 配置管理器
-├── exceptions.py    # 异常类
-├── utils.py         # 工具函数
-└── v1.1.5.md        # 当前版本文档
 
-docs/                # 各版本发布说明
-├── v1.0.0.md
-├── v1.1.0.md
-├── v1.1.1.md
-├── v1.1.2.md
-├── v1.1.3.md
-├── v1.1.4.md
-└── v1.1.5.md
-
-requirements.txt     # 依赖
-setup.py             # 包配置
-```
+完整默认值见 [main/rpa_oss_toolkit/config.py](main/rpa_oss_toolkit/config.py)。
 
 ---
 
@@ -188,35 +195,61 @@ except UploadError as e:
     print(f"上传错误: {e}")
 ```
 
-完整异常体系见 `rpa_oss_toolkit/exceptions.py`。
+完整异常体系见 [main/rpa_oss_toolkit/exceptions.py](main/rpa_oss_toolkit/exceptions.py)。
 
 ---
 
-## 配置项
+## 开发与测试
 
-通过 `ConfigManager` 集中管理，支持运行时动态修改：
+```bash
+# 安装开发依赖（main 目录下）
+pip install -r requirements-dev.txt
+pip install -e .
 
-| 配置项 | 默认值 | 说明 |
-|--------|--------|------|
-| `log_prefix` | `"logs/"` | 日志文件 OSS 路径前缀 |
-| `log_buffer_size` | `50` | 日志缓冲区大小（条） |
-| `min_multithread_size` | `5242880` (5MB) | 分片传输阈值 |
-| `max_retry_count` | `3` | 分片传输最大重试次数 |
-| `retry_delay` | `2s` | 首次重试延迟（指数退避） |
-| `default_expires_in` | `3600` (1小时) | 会话默认有效期 |
+# 单元测试（默认排除集成测试）
+cd main && ../venv/bin/python -m pytest -v
 
-运行时修改配置：
-
-```python
-# 查看当前配置
-session.get_config()
-# -> {"log_prefix": "logs/", "log_buffer_size": 50, ...}
-
-# 修改单条
-session.set_config(log_buffer_size=100)
-
-# 批量修改
-session.set_config(max_retry_count=5, retry_delay=3)
+# 集成测试：先在 main/.env 配置真实 OSS 凭据（参考 main/.env.example）
+cd main && ../venv/bin/python -m pytest -m integration -v
 ```
 
-完整默认值见 `rpa_oss_toolkit/config.py`。
+---
+
+## 目录结构
+
+```
+rpa-oss-toolkit/
+├── .github/
+│   └── workflows/
+│       ├── ci.yml                     # 单元测试 CI
+│       └── pypi-publish.yml           # tag 触发自动发布到 PyPI
+├── .gitattributes                     # 统一 LF 换行
+├── .gitignore                         # 根白名单模式
+├── AGENTS.md                          # 项目约束（智能体）
+├── README.md                          # 项目入口文档（本文件）
+├── LICENSE                            # MIT
+└── main/                              # 源码与打包目录
+    ├── .env.example                   # OSS 凭据模板
+    ├── .gitignore                     # main 内忽略规则
+    ├── docs/
+    │   └── 使用文档.md                 # 完整使用手册
+    ├── pytest.ini                     # 测试配置（默认排除 integration）
+    ├── requirements.txt               # 运行依赖
+    ├── requirements-dev.txt           # 开发依赖
+    ├── setup.py                       # 包配置（setuptools-scm 版本）
+    ├── rpa_oss_toolkit/               # 源码包（import 名）
+    │   ├── __init__.py                # 入口，importlib.metadata 获取版本
+    │   ├── client.py                  # OSSClient + Session
+    │   ├── operations.py              # OSS 底层操作
+    │   ├── logger.py                  # 操作日志器
+    │   ├── config.py                  # 配置管理器
+    │   ├── exceptions.py              # 异常体系
+    │   └── utils.py                   # 工具函数
+    └── tests/                         # 测试
+        ├── conftest.py                # .env 加载与共享夹具
+        ├── test_client.py
+        ├── test_config.py
+        ├── test_exceptions.py
+        ├── test_integration.py        # 集成测试（integration 标记）
+        └── test_utils.py
+```
