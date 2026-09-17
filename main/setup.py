@@ -7,11 +7,11 @@ long_description = README.read_text(encoding="utf-8")
 
 setup(
     name="rpa-oss-toolkit",
-    use_scm_version=True,
+    use_scm_version={"root": ".."},
     setup_requires=["setuptools-scm"],
     python_requires=">=3.8",
     license="MIT",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "oss2>=2.18.0",
     ],
