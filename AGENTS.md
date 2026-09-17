@@ -49,7 +49,7 @@ rpa-oss-toolkit/
 - WSL 系统 Python：`python3`（3.14，无 pip，pip 从 `/usr/share/python-wheels/pip-*.whl` 引导）
 - venv 重建方法：`python3 -m venv --without-pip venv && venv/bin/python /usr/share/python-wheels/pip-*.whl/pip install pip`
 - 开发依赖安装：`venv/bin/pip install -r main/requirements-dev.txt && venv/bin/pip install -e main/`
-- 代理：`git config http.proxy http://127.0.0.1:7897`（WSL2 下 127.0.0.1 不通 Windows 代理，需用 Windows 主机 IP）
+- pip 一律走国内镜像直连（如 `https://mirrors.aliyun.com/pypi/simple/`），禁止走代理；GitHub 直连可用
 
 ## 代码规范
 
@@ -109,13 +109,13 @@ git push origin v1.x.x
 
 需要在 GitHub 仓库 Settings → Secrets 中配置 `PYPI_API_TOKEN`。
 
-## 推送到 GitHub（代理）
+## 推送到 GitHub（SSH deploy key）
 
-```bash
-git config http.proxy http://<Windows主机IP>:7897
-git push
-git config --unset http.proxy   # 用完取消
-```
+remote 已配置为 SSH 别名 `git@github.com-rpa-oss`，直接 `git push` 即可（直连，无需代理）。
+
+- 密钥：`.ssh/rpa-oss-deploy-key`（仓库 deploy key，带写权限，被 .gitignore 忽略不入库）
+- 别名定义：`~/.ssh/config` 的 `Host github.com-rpa-oss`，IdentityFile 指向上述密钥
+- 密钥失效时：GitHub 仓库 Settings → Deploy keys 重新添加 `.ssh/rpa-oss-deploy-key.pub`
 
 ## 测试
 
