@@ -1,16 +1,19 @@
+from pathlib import Path
+
 from setuptools import setup, find_packages
 
-with open("README.md", encoding="utf-8") as f:
-    long_description = f.read()
+README = Path(__file__).resolve().parent.parent / "README.md"
+long_description = README.read_text(encoding="utf-8")
 
 setup(
     name="rpa-oss-toolkit",
     use_scm_version=True,
     setup_requires=["setuptools-scm"],
     python_requires=">=3.8",
+    license="MIT",
     packages=find_packages(),
     install_requires=[
-        "oss2>=2.0.0",
+        "oss2>=2.18.0",
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -1,0 +1,8 @@
+# 密钥与本地环境，不可删
+/.env
+
+# 构建产物与缓存
+/dist/
+/*.egg-info/
+__pycache__/
+.pytest_cache/

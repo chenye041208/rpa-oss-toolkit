@@ -1,19 +1,9 @@
-# 只追踪 rpa_oss_toolkit/ 内的源码
+# 白名单：默认忽略一切，显式放行才跟踪
 /*
-!/rpa_oss_toolkit/
-!/.gitignore
-!README.md
-!/docs/
-!/setup.py
-!/requirements.txt
+!/main/
 !/.github/
 !/.gitattributes
+!/.gitignore
 !/AGENTS.md
-
-# 通用忽略
-__pycache__/
-*.pyc
-venv/
-.env
-*.egg-info/
-.pytest_cache/
+!/README.md
+!/LICENSE
